@@ -1063,18 +1063,47 @@
     // ============================
     // Booking form submit (front-end only demo)
     // ============================
-    const bookingForm = document.getElementById('bookingForm');
-    const formStatus = document.getElementById('formStatus');
+   const bookingForm = document.getElementById('bookingForm');
+const formStatus = document.getElementById('formStatus');
 
-    bookingForm.addEventListener('submit', (e) => {
-      e.preventDefault(); // Prevent actual page reload since there is no backend
+bookingForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      // Simple success message — replace with real API call if backend is added
-      formStatus.textContent = 'Thank you! Your booking request has been received. We will contact you soon.';
-      formStatus.style.color = '#16a34a';
-      formStatus.style.display = 'block';
+    const formData = {
+        fullName: document.getElementById("fullName").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        eventType: document.getElementById("eventType").value,
+        eventDate: document.getElementById("eventDate").value,
+        message: document.getElementById("message").value
+    };
 
-      bookingForm.reset();
+    try {
+        const response = await fetch(
+            "https://anandhu2550.app.n8n.cloud/webhook/client-inquiry",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            }
+        );
+
+        const result = await response.json();
+
+        formStatus.innerHTML = result.message || "Booking submitted successfully!";
+        formStatus.style.color = "green";
+
+        bookingForm.reset();
+
+    } catch (error) {
+        console.error(error);
+
+        formStatus.innerHTML = "Failed to submit booking.";
+        formStatus.style.color = "red";
+    }
+});
     });
   </script>
 
